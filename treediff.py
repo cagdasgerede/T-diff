@@ -14,7 +14,9 @@ D = {}
 # @parameter b the label of the target node
 # @returns integer
 def r(a, b):
-  if a == b:  # No change
+  if (a != ALPHA and
+      b != ALPHA  and
+      a.label() == b.label()): # No change
     return 0
   else:  # Insert, Delete, Change.
     return 1
@@ -35,7 +37,6 @@ def computeE(sourceTree, targetTree):
               if (s == u and u == i) and (t == v and v == j):
                 E[key] = r(sourceTree.nodeAt(i), targetTree.nodeAt(j))
               elif (s == u and u == i) or (t < v and v == j):
-                print '%d %d' % (t, j)
                 f_j = targetTree.fatherOf(j).preorderPosition()
                 dependentKey = keyForE(s, u, i, t, f_j, j - 1)
                 E[key] = E[dependentKey] + r(ALPHA, targetTree.nodeAt(j))
@@ -59,26 +60,6 @@ def computeE(sourceTree, targetTree):
 
   return E
 
-from tree import *
-a = TreeNode('A')
-b = TreeNode('B')
-a.addChild(b)
-c = TreeNode('C')
-b.addChild(c)
-treeOne = Tree(a)
-treeOne.buildCaches()
-
-a = TreeNode('A')
-b = TreeNode('B')
-c = TreeNode('C')
-d = TreeNode('D')
-a.addChild(b)
-a.addChild(c)
-c.addChild(d)
-treeTwo = Tree(a)
-treeTwo.buildCaches()
-
-
 def keyForMIN_M(s, t):
   return '%d:%d' % (s, t)
 
@@ -101,6 +82,7 @@ def computeMIN_M(E, sourceTree, targetTree):
       MIN_M[keyForMIN_M_i_j] = INFINITE
       f_i = sourceTree.fatherOf(i).preorderPosition()
       f_j = targetTree.fatherOf(j).preorderPosition()
+
       for s in sourceTree.ancestorIterator(f_i):
         for t in targetTree.ancestorIterator(f_j):
           dependentKeyForE = keyForE(s, f_i, i - 1, t, f_j, j - 1)
@@ -109,7 +91,7 @@ def computeMIN_M(E, sourceTree, targetTree):
                        E[dependentKeyForE] -
                        r(sourceTree.nodeAt(s), targetTree.nodeAt(t)))
           MIN_M[keyForMIN_M_i_j] = min(temp, MIN_M[keyForMIN_M_i_j])
-
+          
       MIN_M[keyForMIN_M_i_j]  = (
           MIN_M[keyForMIN_M_i_j]  +
           r(sourceTree.nodeAt(i), targetTree.nodeAt(j)))
@@ -133,14 +115,8 @@ def computeD(sourceTree, targetTree, MIN_M):
         MIN_M[keyForMIN_M(i, j)])
   return D
 
-
-E = computeE(treeOne, treeTwo)
-print E
-
-MIN_M = computeMIN_M(E, treeOne, treeTwo)
-print MIN_M
-
-D = computeD(treeOne, treeTwo, MIN_M)
-print D
-
-print D[keyForD(treeOne.size(), treeTwo.size())]
+def computeMinDiff(treeOne, treeTwo):
+  E = computeE(treeOne, treeTwo)
+  MIN_M = computeMIN_M(E, treeOne, treeTwo)
+  D = computeD(treeOne, treeTwo, MIN_M)
+  return D[keyForD(treeOne.size(), treeTwo.size())]

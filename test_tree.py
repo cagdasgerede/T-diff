@@ -1,5 +1,5 @@
 # File containings unit tests for testing Tree and TreeNode classes.
-# Run the test by executing "python test_treediff.py -v" at the command
+# Run the test by executing "python test_tree.py -v" at the command
 # line.
 import unittest
 from tree import *
