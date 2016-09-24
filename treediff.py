@@ -1,3 +1,14 @@
+# This file has the implementation of the algorithm described in
+# "The Tree-to-Tree Correction Problem" by Kuo-Chung Tai published
+# at the Journal of the ACM , 26(3):422-433, July 1979.
+#
+# We follow the naming of the variables and functions from the paper
+# even though sometimes it may be against some Python conventions.
+# The algorithm is at section 5 in the paper. There is one
+# missing piece in the algorithm provided in the paper which is
+# MIN_M(i, 1) and MIN_M(1, j) values. We added the computation
+# of these in the implementation below.
+
 INFINITE = float("inf")
 
 # Constant used for describing insertions or deletions
@@ -24,8 +35,14 @@ def r(a, b):
 def keyForE(s, u, i, t, v, j):
   return '%d:%d:%d, %d:%d:%d' % (s, u, i, t, v, j)
 
+# Returns the E mapping. Check the paper to understand what
+# the mapping mean
+#
+# @parameter sourceTree the source tree (Tree)
+# @parameter targetTree the target tree (Tree)
+# @returns dict (in the format {'i:j:k, p:q:r' => cost} where 
+#                        i, j, k, p, q, r are integers)
 def computeE(sourceTree, targetTree):
-  # E: 'i:j:k, p:q:r' => cost
   E = {}
   for i in range(1, sourceTree.size() + 1):
     for j in range(1, targetTree.size() + 1):
@@ -60,17 +77,27 @@ def computeE(sourceTree, targetTree):
 
   return E
 
+# Returns the key for MIN_M map
 def keyForMIN_M(s, t):
   return '%d:%d' % (s, t)
 
+# Returns the MIN_M mapping. Check out the article to see
+# what the mapping mean
+#
+# @parameter E computed by computeE (dict)
+# @parameter sourceTree the source tree (Tree)
+# @parameter targetTree the target tree (Tree)
+# @returns dict
 def computeMIN_M(E, sourceTree, targetTree):
   MIN_M = {keyForMIN_M(1, 1) : 0}
   
+  # This part is missing in the paper
   for j in range(2, targetTree.size()):
     MIN_M[keyForMIN_M(1, j)] = (
         MIN_M[keyForMIN_M(1, j - 1)] +
         r(ALPHA, targetTree.nodeAt(j)))
-  
+
+  # This part is missing in the paper
   for i in range(2, sourceTree.size()):
     MIN_M[keyForMIN_M(i, 1)] = (
         MIN_M[keyForMIN_M(i - 1, 1)] +
@@ -98,9 +125,17 @@ def computeMIN_M(E, sourceTree, targetTree):
 
   return MIN_M
 
+# Returns the key for D map
 def keyForD(i, j):
   return '%d, %d' % (i, j)
 
+# Returns the D mapping. Check out the article to see
+# what the mapping mean
+#
+# @parameter sourceTree the source tree (Tree)
+# @parameter targetTree the target tree (Tree)
+# @parameter MIN_M the MIN_M map (dict)
+# @returns dict
 def computeD(sourceTree, targetTree, MIN_M):
   D = {keyForD(1, 1) : 0}
   for i in range(2, sourceTree.size() + 1):
@@ -115,8 +150,13 @@ def computeD(sourceTree, targetTree, MIN_M):
         MIN_M[keyForMIN_M(i, j)])
   return D
 
-def computeMinDiff(treeOne, treeTwo):
-  E = computeE(treeOne, treeTwo)
-  MIN_M = computeMIN_M(E, treeOne, treeTwo)
-  D = computeD(treeOne, treeTwo, MIN_M)
-  return D[keyForD(treeOne.size(), treeTwo.size())]
+# Returns the distance between the given trees
+#
+# @parameter sourceTree the source tree (Tree)
+# @parameter targetTree the target tree (Tree)
+# @returns int
+def computeMinDiff(sourceTree, targetTree):
+  E = computeE(sourceTree, targetTree)
+  MIN_M = computeMIN_M(E, sourceTree, targetTree)
+  D = computeD(sourceTree, targetTree, MIN_M)
+  return D[keyForD(sourceTree.size(), targetTree.size())]
