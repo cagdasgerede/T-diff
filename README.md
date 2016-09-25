@@ -34,7 +34,7 @@ treeTwo.buildCaches()
 distance, mapping = computeDiff(treeOne, treeTwo) 
 print distance # Prints 2
 print mapping # [(1, 1), (2, 3), (3, 4), ('alpha', 2)]
-print produceHumanFriendlyMapping(mapping, treeOne, treeTwo) # ['No change for A (@1)', 'Change from B (@2) to C (@3)', 'No change for D (@3)', 'Insert B (@2)']
+print produceHumanFriendlyMapping(mapping, treeOne, treeTwo) # ['No change for A (@1 and @1)', 'Change from B (@2) to C (@3)', 'No change for D (@3 and @4)', 'Insert B (@2)']
 ```
 
 The last line shows how to produce the mapping between the source and the target describing how a sequence of edit operations transforms the source tree to the target, ignoring the order in which edit operations are applied.
