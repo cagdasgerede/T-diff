@@ -2,11 +2,10 @@
 # Run the test by executing "python test_treediff.py -v" at the command
 # line.
 import unittest
-from tree import *
+from lib.tree import *
 from treediff import *
 
 class TestTreeDiff(unittest.TestCase):
-
   def setUp(self):
     a = TreeNode('A')
     b = TreeNode('B')
