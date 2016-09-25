@@ -1,12 +1,12 @@
 # T-diff
 
-This repository contains the implementation of an algorithm computing the distance between two trees. The algorithm was published in an aricle titled "The Tree-to-Tree Correction Problem" by Kuo-Chung Tai at the Journal of the ACM, 26(3):422-433, in July 1979.
+This repository contains the implementation of an algorithm computing the distance between two trees. The algorithm was published in an article titled "The Tree-to-Tree Correction Problem" by Kuo-Chung Tai at the Journal of the ACM, 26(3):422-433, in July 1979.
 
 The time complexity of the algorithm is O(V * V' * L^2 * L'^2) where V, V' are the number of nodes and L, L' are the the maximum depths of the source and target trees respectively.
 
 During the implementation, we came across some minor issues in the reported algorithm. The implementation contains the fixes for these issues.
 
-At the moment, the trees are assumed to be instances of Tree class in the tree module contained in the implementation. An example run is below
+At the moment, the trees are assumed to be instances of Tree class in the tree module contained in the implementation. An example usage is given below:
 ```python
 from tree import *
 from treediff import *
