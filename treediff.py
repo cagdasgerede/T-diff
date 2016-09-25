@@ -235,8 +235,9 @@ def produceHumanFriendlyMapping(mapping, sourceTree, targetTree):
       targetNode = targetTree.nodeAt(j)
       if sourceNode.label() == targetNode.label():
         humandFriendlyMapping.append(
-            'No change for %s (@%d)' % (
-                sourceNode.label(), sourceNode.preorderPosition()))
+            'No change for %s (@%d and @%d)' % (
+                sourceNode.label(), sourceNode.preorderPosition(),
+                targetNode.preorderPosition()))
       else:
         humandFriendlyMapping.append(
             'Change from %s (@%d) to %s (@%d)' % (

@@ -82,24 +82,27 @@ class TestTreeDiff(unittest.TestCase):
     description = produceHumanFriendlyMapping(
         mapping, self.treeOne, self.treeTwo)
     self.assertEqual([
-        'No change for A (@1)', 'Change from B (@2) to C (@3)',
-        'No change for D (@3)', 'Insert B (@2)'],
+        'No change for A (@1 and @1)',
+        'Change from B (@2) to C (@3)',
+        'No change for D (@3 and @4)', 'Insert B (@2)'],
         description)
 
     _, mapping = computeDiff(self.treeOne, self.treeThree)
     description = produceHumanFriendlyMapping(
         mapping, self.treeOne, self.treeThree)
     self.assertEqual([
-        'No change for A (@1)', 'Change from B (@2) to C (@3)',
-        'No change for D (@3)', 'Insert B (@2)', 'Insert E (@5)'],
+        'No change for A (@1 and @1)',
+        'Change from B (@2) to C (@3)',
+        'No change for D (@3 and @4)',
+       'Insert B (@2)', 'Insert E (@5)'],
         description)
 
     _, mapping = computeDiff(self.treeTwo, self.treeThree)
     description = produceHumanFriendlyMapping(
         mapping, self.treeTwo, self.treeThree)
     self.assertEqual([
-        'No change for A (@1)', 'No change for B (@2)',
-        'No change for C (@3)', 'No change for D (@4)',
+        'No change for A (@1 and @1)', 'No change for B (@2 and @2)',
+        'No change for C (@3 and @3)', 'No change for D (@4 and @4)',
         'Insert E (@5)'],
         description)
 
@@ -107,17 +110,17 @@ class TestTreeDiff(unittest.TestCase):
     description = produceHumanFriendlyMapping(
         mapping, self.treeThree, self.treeFour)
     self.assertEqual([
-        'No change for A (@1)', 'No change for B (@2)',
-        'Change from C (@3) to CC (@3)', 'No change for D (@4)',
-        'No change for E (@5)'],
+        'No change for A (@1 and @1)', 'No change for B (@2 and @2)',
+        'Change from C (@3) to CC (@3)', 'No change for D (@4 and @4)',
+        'No change for E (@5 and @5)'],
         description)
 
     _, mapping = computeDiff(self.treeTwo, self.treeTwo)
     description = produceHumanFriendlyMapping(
         mapping, self.treeTwo, self.treeTwo)
     self.assertEqual([
-        'No change for A (@1)', 'No change for B (@2)',
-        'No change for C (@3)', 'No change for D (@4)'],
+        'No change for A (@1 and @1)', 'No change for B (@2 and @2)',
+        'No change for C (@3 and @3)', 'No change for D (@4 and @4)'],
         description)
 
 if __name__ == '__main__':
