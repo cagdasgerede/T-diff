@@ -34,4 +34,4 @@ self.treeTwo.buildCaches()
 print computeMinDiff(self.treeOne, self.treeTwo)  # Prints 2
 ```
 
-We are working on the Computation of the mapping between the source and the target describing how a sequence of edit operations transforms the source tree to the target, ignoring the order in which edit operations are applied.
+We are working on the computation of the mapping between the source and the target describing how a sequence of edit operations transforms the source tree to the target, ignoring the order in which edit operations are applied.
