@@ -24,7 +24,7 @@ class TestTreeDiff(unittest.TestCase):
     c.addChild(d)
     self.treeTwo = Tree(a)
     self.treeTwo.buildCaches()
-    
+
     a = TreeNode('A')
     b = TreeNode('B')
     c = TreeNode('C')
@@ -50,11 +50,75 @@ class TestTreeDiff(unittest.TestCase):
     self.treeFour.buildCaches()
 
   def test_distance(self):
-    self.assertEqual(2, computeMinDiff(self.treeOne, self.treeTwo))
-    self.assertEqual(3, computeMinDiff(self.treeOne, self.treeThree))
-    self.assertEqual(1, computeMinDiff(self.treeTwo, self.treeThree))
-    self.assertEqual(1, computeMinDiff(self.treeThree, self.treeFour))
-    self.assertEqual(0, computeMinDiff(self.treeTwo, self.treeTwo))
+    self.assertEqual(2, computeDiff(self.treeOne, self.treeTwo)[0])
+    self.assertEqual(3, computeDiff(self.treeOne, self.treeThree)[0])
+    self.assertEqual(1, computeDiff(self.treeTwo, self.treeThree)[0])
+    self.assertEqual(1, computeDiff(self.treeThree, self.treeFour)[0])
+    self.assertEqual(0, computeDiff(self.treeTwo, self.treeTwo)[0])
+
+  def test_mapping(self):
+    _, mapping = computeDiff(self.treeOne, self.treeTwo)
+    expectedMapping = [(1, 1), (2, 3), (3, 4), ('alpha', 2)]
+    self.assertTrue(expectedMapping, mapping)
+
+    _, mapping = computeDiff(self.treeOne, self.treeThree)
+    expectedMapping = [(1, 1), (2, 3), (3, 4), ('alpha', 2), ('alpha', 5)]
+    self.assertEqual(expectedMapping, mapping)
+
+    _, mapping = computeDiff(self.treeTwo, self.treeThree)
+    expectedMapping = [(1, 1), (2, 2), (3, 3), (4, 4), ('alpha', 5)]
+    self.assertEqual(expectedMapping, mapping)
+
+    _, mapping = computeDiff(self.treeThree, self.treeFour)
+    expectedMapping = [(1, 1), (2, 2), (3, 3), (4, 4), (5, 5)]
+    self.assertEqual(expectedMapping, mapping)
+
+    _, mapping = computeDiff(self.treeTwo, self.treeTwo)
+    expectedMapping = [(1, 1), (2, 2), (3, 3), (4, 4)]
+    self.assertEqual(expectedMapping, mapping)
+
+  def test_produceHumanFriendlyMapping(self):
+    _, mapping = computeDiff(self.treeOne, self.treeTwo)
+    description = produceHumanFriendlyMapping(
+        mapping, self.treeOne, self.treeTwo)
+    self.assertEqual([
+        'No change for A (@1)', 'Change from B (@2) to C (@3)',
+        'No change for D (@3)', 'Insert B (@2)'],
+        description)
+
+    _, mapping = computeDiff(self.treeOne, self.treeThree)
+    description = produceHumanFriendlyMapping(
+        mapping, self.treeOne, self.treeThree)
+    self.assertEqual([
+        'No change for A (@1)', 'Change from B (@2) to C (@3)',
+        'No change for D (@3)', 'Insert B (@2)', 'Insert E (@5)'],
+        description)
+
+    _, mapping = computeDiff(self.treeTwo, self.treeThree)
+    description = produceHumanFriendlyMapping(
+        mapping, self.treeTwo, self.treeThree)
+    self.assertEqual([
+        'No change for A (@1)', 'No change for B (@2)',
+        'No change for C (@3)', 'No change for D (@4)',
+        'Insert E (@5)'],
+        description)
+
+    _, mapping = computeDiff(self.treeThree, self.treeFour)
+    description = produceHumanFriendlyMapping(
+        mapping, self.treeThree, self.treeFour)
+    self.assertEqual([
+        'No change for A (@1)', 'No change for B (@2)',
+        'Change from C (@3) to CC (@3)', 'No change for D (@4)',
+        'No change for E (@5)'],
+        description)
+
+    _, mapping = computeDiff(self.treeTwo, self.treeTwo)
+    description = produceHumanFriendlyMapping(
+        mapping, self.treeTwo, self.treeTwo)
+    self.assertEqual([
+        'No change for A (@1)', 'No change for B (@2)',
+        'No change for C (@3)', 'No change for D (@4)'],
+        description)
 
 if __name__ == '__main__':
     unittest.main()

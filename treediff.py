@@ -14,11 +14,6 @@ INFINITE = float("inf")
 # Constant used for describing insertions or deletions
 ALPHA = 'alpha'
 
-# Cost maps to be computed
-E = {}
-MIN_M = {}
-D = {}
-
 # Returns the cost of transforming a to b
 #
 # @parameter a the label of the source node
@@ -36,14 +31,23 @@ def keyForE(s, u, i, t, v, j):
   return '%d:%d:%d, %d:%d:%d' % (s, u, i, t, v, j)
 
 # Returns the E mapping. Check the paper to understand what
-# the mapping mean
+# the mapping mean.
 #
 # @parameter sourceTree the source tree (Tree)
 # @parameter targetTree the target tree (Tree)
-# @returns dict (in the format {'i:j:k, p:q:r' => cost} where 
-#                        i, j, k, p, q, r are integers)
+# @returns (dict, dict)
+#        The first dict is in the format {'i:j:k, p:q:r' => cost} where 
+#        i, j, k, p, q, r are integers. The second dict is in the format
+#        {'i:j:k, p:q:r' => mapping} where mapping is a list of
+#         (x, y) pairs showing which node at the preorder position x
+#         in the source tree is mapped to which node at the preorder
+#         position y in the target tree. If x is ALPHA, then it shows
+#         the node at the preorder position y in the target tree is
+#         inserted. If y is ALPHA, then it shows the node at the preorder
+#         position x in the souce tree is deleted.
 def computeE(sourceTree, targetTree):
   E = {}
+  mappingForE = {}
   for i in range(1, sourceTree.size() + 1):
     for j in range(1, targetTree.size() + 1):
       for u in sourceTree.ancestorIterator(i):
@@ -53,14 +57,17 @@ def computeE(sourceTree, targetTree):
               key = keyForE(s, u, i, t, v, j)
               if (s == u and u == i) and (t == v and v == j):
                 E[key] = r(sourceTree.nodeAt(i), targetTree.nodeAt(j))
+                mappingForE[key] = [(i,j)]
               elif (s == u and u == i) or (t < v and v == j):
                 f_j = targetTree.fatherOf(j).preorderPosition()
                 dependentKey = keyForE(s, u, i, t, f_j, j - 1)
                 E[key] = E[dependentKey] + r(ALPHA, targetTree.nodeAt(j))
+                mappingForE[key] = mappingForE[dependentKey] + [(ALPHA, j)]
               elif (s < u and u == i) or (t == v and v == j):
                 f_i = sourceTree.fatherOf(i).preorderPosition()
                 dependentKey = keyForE(s, f_i, i - 1, t, v, j)
                 E[key] = E[dependentKey] + r(sourceTree.nodeAt(i), ALPHA)
+                mappingForE[key] = mappingForE[dependentKey] + [(i, ALPHA)]
               else:
                 xNode = sourceTree.childNodeOnPathFromDescendant(u, i)
                 x = xNode.preorderPosition()
@@ -74,8 +81,17 @@ def computeE(sourceTree, targetTree):
                     E[dependentKey1],
                     E[dependentKey2],
                     E[dependentKey3] + E[dependentKey4])
+                # Remember the mapping.
+                if E[key] == E[dependentKey1]:
+                  mappingForE[key] = mappingForE[dependentKey1]
+                elif E[key] == E[dependentKey2]:
+                  mappingForE[key] = mappingForE[dependentKey2]
+                else:
+                  mappingForE[key] = (
+                      mappingForE[dependentKey3] + 
+                      mappingForE[dependentKey4])
 
-  return E
+  return E, mappingForE
 
 # Returns the key for MIN_M map
 def keyForMIN_M(s, t):
@@ -87,21 +103,34 @@ def keyForMIN_M(s, t):
 # @parameter E computed by computeE (dict)
 # @parameter sourceTree the source tree (Tree)
 # @parameter targetTree the target tree (Tree)
-# @returns dict
-def computeMIN_M(E, sourceTree, targetTree):
+# @returns (dict, dict)
+#        The first dict is the MIN_M map (key to cost). The second
+#        dict is (key to list of integer pairs) the transformation mapping
+#        where a pair (x, y) shows which node at the preorder position x
+#         in the source tree is mapped to which node at the preorder
+#         position y in the target tree. If x is ALPHA, then it shows
+#         the node at the preorder position y in the target tree is
+#         inserted. If y is ALPHA, then it shows the node at the preorder
+#         position x in the souce tree is deleted.
+def computeMIN_M(E, mappingForE, sourceTree, targetTree):
   MIN_M = {keyForMIN_M(1, 1) : 0}
+  mappingForMinM = {keyForMIN_M(1, 1) : [(1, 1)]}
   
   # This part is missing in the paper
   for j in range(2, targetTree.size()):
     MIN_M[keyForMIN_M(1, j)] = (
         MIN_M[keyForMIN_M(1, j - 1)] +
         r(ALPHA, targetTree.nodeAt(j)))
+    mappingForMinM[keyForMIN_M(1, j)] = (
+        mappingForMinM[keyForMIN_M(1, j - 1)] + [(ALPHA, j)])
 
   # This part is missing in the paper
   for i in range(2, sourceTree.size()):
     MIN_M[keyForMIN_M(i, 1)] = (
         MIN_M[keyForMIN_M(i - 1, 1)] +
         r(sourceTree.nodeAt(i), ALPHA))
+    mappingForMinM[keyForMIN_M(i, 1)] = (
+        mappingForMinM[keyForMIN_M(i - 1, 1)] + [(i, ALPHA)])
   
   for i in range(2, sourceTree.size() + 1):
     for j in range(2, targetTree.size() + 1):
@@ -118,12 +147,17 @@ def computeMIN_M(E, sourceTree, targetTree):
                        E[dependentKeyForE] -
                        r(sourceTree.nodeAt(s), targetTree.nodeAt(t)))
           MIN_M[keyForMIN_M_i_j] = min(temp, MIN_M[keyForMIN_M_i_j])
+          if temp == MIN_M[keyForMIN_M_i_j]:
+            mappingForMinM[keyForMIN_M_i_j] = list(set(
+                mappingForMinM[dependentKeyForM] +
+                mappingForE[dependentKeyForE]))
           
       MIN_M[keyForMIN_M_i_j]  = (
           MIN_M[keyForMIN_M_i_j]  +
           r(sourceTree.nodeAt(i), targetTree.nodeAt(j)))
+      mappingForMinM[keyForMIN_M_i_j].append((i, j))
 
-  return MIN_M
+  return MIN_M, mappingForMinM
 
 # Returns the key for D map
 def keyForD(i, j):
@@ -135,28 +169,98 @@ def keyForD(i, j):
 # @parameter sourceTree the source tree (Tree)
 # @parameter targetTree the target tree (Tree)
 # @parameter MIN_M the MIN_M map (dict)
-# @returns dict
-def computeD(sourceTree, targetTree, MIN_M):
+# @parameter mappingForM the transformation details for MIN_M
+# @returns (dict, dict)
+#        The first dict is the D mapping (key to cost).
+#        The second dict is (key to list of integer pairs) the transformation mapping
+#        where a pair (x, y) shows which node at the preorder position x
+#         in the source tree is mapped to which node at the preorder
+#         position y in the target tree. If x is ALPHA, then it shows
+#         the node at the preorder position y in the target tree is
+#         inserted. If y is ALPHA, then it shows the node at the preorder
+#         position x in the souce tree is deleted.
+def computeD(sourceTree, targetTree, MIN_M, mappingForMinM):
   D = {keyForD(1, 1) : 0}
+  mappingForD = {keyForD(1, 1) : [(1, 1)]}
+
   for i in range(2, sourceTree.size() + 1):
     D[keyForD(i, 1)] = D[keyForD(i - 1, 1)] + r(sourceTree.nodeAt(i), ALPHA)
+    mappingForD[keyForD(i, 1)] = (
+        mappingForD[keyForD(i - 1, 1)] + [(i, ALPHA)])
+
   for j in range(2, targetTree.size() + 1):
     D[keyForD(1, j)] = D[keyForD(1, j - 1)] + r(ALPHA, targetTree.nodeAt(j))
+    mappingForD[keyForD(1, j)] = (
+        mappingForD[keyForD(1, j - 1)] + [(ALPHA, j)])
+
   for i in range(2, sourceTree.size() + 1):
     for j in range(2, targetTree.size() + 1):
-      D[keyForD(i, j)] = min(
-        D[keyForD(i, j - 1)] + r(ALPHA, targetTree.nodeAt(j)),
-        D[keyForD(i - 1, j)] + r(sourceTree.nodeAt(i), ALPHA),
-        MIN_M[keyForMIN_M(i, j)])
-  return D
+      option1 = D[keyForD(i, j - 1)] + r(ALPHA, targetTree.nodeAt(j))
+      option2 = D[keyForD(i - 1, j)] + r(sourceTree.nodeAt(i), ALPHA),
+      option3 = MIN_M[keyForMIN_M(i, j)]
+      D[keyForD(i, j)] = min(option1, option2, option3)
 
-# Returns the distance between the given trees
+      if D[keyForD(i, j)] == option1:
+        mappingForD[keyForD(i,  j)] = (
+            mappingForD[keyForD(i, j - 1)] + [(ALPHA, j)])
+      elif D[keyForD(i, j)] == option2:
+        mappingForD[keyForD(i,  j)] = (
+            mappingForD[keyForD(i - 1, j)] + [(i, ALPHA)])
+      else:
+        mappingForD[keyForD(i,  j)] = mappingForMinM[keyForMIN_M(i, j)]
+  return D, mappingForD
+
+# Produces a list of humand friendly descriptions for mapping
+# between two trees
+# Example:
+#   ['No change for A (@1)', 'Change from B (@2) to C (@3)',
+#    'No change for D (@3)', 'Insert B (@2)']
+#
+# @returns list of strings
+def produceHumanFriendlyMapping(mapping, sourceTree, targetTree):
+  humandFriendlyMapping = []
+  for i, j in mapping:
+    if i == ALPHA:
+      targetNode = targetTree.nodeAt(j)
+      humandFriendlyMapping.append(
+          'Insert %s (@%d)' % (
+              targetNode.label(), targetNode.preorderPosition()))
+    elif j == ALPHA:
+      sourceNode = sourceTree.nodeAt(i)
+      humandFriendlyMapping.append(
+          'Delete %s (@%d)' % (
+              sourceNode.label(), sourceNode.preorderPosition()))
+    else:
+      sourceNode = sourceTree.nodeAt(i)
+      targetNode = targetTree.nodeAt(j)
+      if sourceNode.label() == targetNode.label():
+        humandFriendlyMapping.append(
+            'No change for %s (@%d)' % (
+                sourceNode.label(), sourceNode.preorderPosition()))
+      else:
+        humandFriendlyMapping.append(
+            'Change from %s (@%d) to %s (@%d)' % (
+                sourceNode.label(), sourceNode.preorderPosition(),
+                targetNode.label(), targetNode.preorderPosition()))
+  return humandFriendlyMapping
+
+# Returns the distance between the given trees and the list of pairs
+# where each pair (x, y) shows which node at the preorder position x
+# in the source tree is mapped to which node at the preorder
+# position y in the target tree. If x is ALPHA, then it shows
+# the node at the preorder position y in the target tree is
+# inserted. If y is ALPHA, then it shows the node at the preorder
+# position x in the souce tree is deleted.
 #
 # @parameter sourceTree the source tree (Tree)
 # @parameter targetTree the target tree (Tree)
-# @returns int
-def computeMinDiff(sourceTree, targetTree):
-  E = computeE(sourceTree, targetTree)
-  MIN_M = computeMIN_M(E, sourceTree, targetTree)
-  D = computeD(sourceTree, targetTree, MIN_M)
-  return D[keyForD(sourceTree.size(), targetTree.size())]
+# @returns (int, [(int, int)])
+def computeDiff(sourceTree, targetTree):
+  E, mappingForE = computeE(sourceTree, targetTree)
+  MIN_M, mappingForMinM = computeMIN_M(
+      E, mappingForE, sourceTree, targetTree)
+  D, mappingForD = computeD(
+      sourceTree, targetTree, MIN_M, mappingForMinM)
+  mapping = mappingForD[keyForD(sourceTree.size(), targetTree.size())]
+  mapping.sort()
+  return (D[keyForD(sourceTree.size(), targetTree.size())], mapping)
