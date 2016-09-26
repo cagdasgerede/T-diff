@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/cagdasgerede/T-diff.svg?branch=master)](https://travis-ci.org/cagdasgerede/T-diff)
+
 # T-diff
 
 This repository contains the implementation of an algorithm computing the distance between two trees. The algorithm was published in an aricle titled "The Tree-to-Tree Correction Problem" by Kuo-Chung Tai at the Journal of the ACM, 26(3):422-433, in July 1979.
