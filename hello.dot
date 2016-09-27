@@ -1,0 +1,16 @@
+digraph G {
+subgraph { rank = same; SourceA; TargetA }
+SourceA -> SourceB
+SourceB -> SourceD
+SourceD -> SourceZ
+SourceZ -> SourceKKK
+TargetA -> TargetB
+TargetA -> TargetC
+TargetC -> TargetD
+SourceA -> TargetA [style=dotted color="green" constraint=false]
+SourceB -> TargetC [style=dotted color="gray" constraint=false]
+SourceD [color="red"]
+SourceZ [color="red"]
+SourceKKK -> TargetD [style=dotted color="gray" constraint=false]
+TargetB [color="orange"]
+}
