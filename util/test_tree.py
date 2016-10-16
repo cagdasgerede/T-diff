@@ -5,8 +5,8 @@ command line.
 """
 
 import unittest
-from lib.tree import Tree
-from lib.tree import TreeNode
+from tree import Tree
+from tree import TreeNode
 
 # Pylint does not ignore the methods in the parent class when considering the
 # number of max 20 methods in a class. We suppress this check for test classes

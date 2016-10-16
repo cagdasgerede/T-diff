@@ -50,29 +50,29 @@ def computeE(sourceTree, targetTree):
   mappingForE = {}
   for i in range(1, sourceTree.size() + 1):
     for j in range(1, targetTree.size() + 1):
-      for u in sourceTree.ancestorIterator(i):
-        for s in sourceTree.ancestorIterator(u):
-          for v in targetTree.ancestorIterator(j):
-            for t in targetTree.ancestorIterator(v):
+      for u in sourceTree.ancestor_iterator(i):
+        for s in sourceTree.ancestor_iterator(u):
+          for v in targetTree.ancestor_iterator(j):
+            for t in targetTree.ancestor_iterator(v):
               key = keyForE(s, u, i, t, v, j)
               if (s == u and u == i) and (t == v and v == j):
-                E[key] = r(sourceTree.nodeAt(i), targetTree.nodeAt(j))
+                E[key] = r(sourceTree.node_at(i), targetTree.node_at(j))
                 mappingForE[key] = [(i,j)]
               elif (s == u and u == i) or (t < v and v == j):
-                f_j = targetTree.fatherOf(j).preorderPosition()
+                f_j = targetTree.father_of(j).preorder_position()
                 dependentKey = keyForE(s, u, i, t, f_j, j - 1)
-                E[key] = E[dependentKey] + r(ALPHA, targetTree.nodeAt(j))
+                E[key] = E[dependentKey] + r(ALPHA, targetTree.node_at(j))
                 mappingForE[key] = mappingForE[dependentKey] + [(ALPHA, j)]
               elif (s < u and u == i) or (t == v and v == j):
-                f_i = sourceTree.fatherOf(i).preorderPosition()
+                f_i = sourceTree.father_of(i).preorder_position()
                 dependentKey = keyForE(s, f_i, i - 1, t, v, j)
-                E[key] = E[dependentKey] + r(sourceTree.nodeAt(i), ALPHA)
+                E[key] = E[dependentKey] + r(sourceTree.node_at(i), ALPHA)
                 mappingForE[key] = mappingForE[dependentKey] + [(i, ALPHA)]
               else:
-                xNode = sourceTree.childNodeOnPathFromDescendant(u, i)
-                x = xNode.preorderPosition()
-                yNode = targetTree.childNodeOnPathFromDescendant(v, j)
-                y = yNode.preorderPosition()
+                xNode = sourceTree.child_on_path_from_descendant(u, i)
+                x = xNode.preorder_position()
+                yNode = targetTree.child_on_path_from_descendant(v, j)
+                y = yNode.preorder_position()
                 dependentKey1 = keyForE(s, x, i, t, v, j)
                 dependentKey2 = keyForE(s, u, i, t, y, j)
                 dependentKey3 = keyForE(s, u, x - 1, t, v, y - 1)
@@ -120,7 +120,7 @@ def computeMIN_M(E, mappingForE, sourceTree, targetTree):
   for j in range(2, targetTree.size()):
     MIN_M[keyForMIN_M(1, j)] = (
         MIN_M[keyForMIN_M(1, j - 1)] +
-        r(ALPHA, targetTree.nodeAt(j)))
+        r(ALPHA, targetTree.node_at(j)))
     mappingForMinM[keyForMIN_M(1, j)] = (
         mappingForMinM[keyForMIN_M(1, j - 1)] + [(ALPHA, j)])
 
@@ -128,7 +128,7 @@ def computeMIN_M(E, mappingForE, sourceTree, targetTree):
   for i in range(2, sourceTree.size()):
     MIN_M[keyForMIN_M(i, 1)] = (
         MIN_M[keyForMIN_M(i - 1, 1)] +
-        r(sourceTree.nodeAt(i), ALPHA))
+        r(sourceTree.node_at(i), ALPHA))
     mappingForMinM[keyForMIN_M(i, 1)] = (
         mappingForMinM[keyForMIN_M(i - 1, 1)] + [(i, ALPHA)])
   
@@ -136,16 +136,16 @@ def computeMIN_M(E, mappingForE, sourceTree, targetTree):
     for j in range(2, targetTree.size() + 1):
       keyForMIN_M_i_j= keyForMIN_M(i, j)
       MIN_M[keyForMIN_M_i_j] = INFINITE
-      f_i = sourceTree.fatherOf(i).preorderPosition()
-      f_j = targetTree.fatherOf(j).preorderPosition()
+      f_i = sourceTree.father_of(i).preorder_position()
+      f_j = targetTree.father_of(j).preorder_position()
 
-      for s in sourceTree.ancestorIterator(f_i):
-        for t in targetTree.ancestorIterator(f_j):
+      for s in sourceTree.ancestor_iterator(f_i):
+        for t in targetTree.ancestor_iterator(f_j):
           dependentKeyForE = keyForE(s, f_i, i - 1, t, f_j, j - 1)
           dependentKeyForM = keyForMIN_M(s, t)
           temp = (MIN_M[dependentKeyForM] +
                        E[dependentKeyForE] -
-                       r(sourceTree.nodeAt(s), targetTree.nodeAt(t)))
+                       r(sourceTree.node_at(s), targetTree.node_at(t)))
           MIN_M[keyForMIN_M_i_j] = min(temp, MIN_M[keyForMIN_M_i_j])
           if temp == MIN_M[keyForMIN_M_i_j]:
             mappingForMinM[keyForMIN_M_i_j] = list(set(
@@ -154,7 +154,7 @@ def computeMIN_M(E, mappingForE, sourceTree, targetTree):
           
       MIN_M[keyForMIN_M_i_j]  = (
           MIN_M[keyForMIN_M_i_j]  +
-          r(sourceTree.nodeAt(i), targetTree.nodeAt(j)))
+          r(sourceTree.node_at(i), targetTree.node_at(j)))
       mappingForMinM[keyForMIN_M_i_j].append((i, j))
 
   return MIN_M, mappingForMinM
@@ -184,19 +184,19 @@ def computeD(sourceTree, targetTree, MIN_M, mappingForMinM):
   mappingForD = {keyForD(1, 1) : [(1, 1)]}
 
   for i in range(2, sourceTree.size() + 1):
-    D[keyForD(i, 1)] = D[keyForD(i - 1, 1)] + r(sourceTree.nodeAt(i), ALPHA)
+    D[keyForD(i, 1)] = D[keyForD(i - 1, 1)] + r(sourceTree.node_at(i), ALPHA)
     mappingForD[keyForD(i, 1)] = (
         mappingForD[keyForD(i - 1, 1)] + [(i, ALPHA)])
 
   for j in range(2, targetTree.size() + 1):
-    D[keyForD(1, j)] = D[keyForD(1, j - 1)] + r(ALPHA, targetTree.nodeAt(j))
+    D[keyForD(1, j)] = D[keyForD(1, j - 1)] + r(ALPHA, targetTree.node_at(j))
     mappingForD[keyForD(1, j)] = (
         mappingForD[keyForD(1, j - 1)] + [(ALPHA, j)])
 
   for i in range(2, sourceTree.size() + 1):
     for j in range(2, targetTree.size() + 1):
-      option1 = D[keyForD(i, j - 1)] + r(ALPHA, targetTree.nodeAt(j))
-      option2 = D[keyForD(i - 1, j)] + r(sourceTree.nodeAt(i), ALPHA),
+      option1 = D[keyForD(i, j - 1)] + r(ALPHA, targetTree.node_at(j))
+      option2 = D[keyForD(i - 1, j)] + r(sourceTree.node_at(i), ALPHA),
       option3 = MIN_M[keyForMIN_M(i, j)]
       D[keyForD(i, j)] = min(option1, option2, option3)
 
@@ -221,28 +221,28 @@ def produceHumanFriendlyMapping(mapping, sourceTree, targetTree):
   humandFriendlyMapping = []
   for i, j in mapping:
     if i == ALPHA:
-      targetNode = targetTree.nodeAt(j)
+      targetNode = targetTree.node_at(j)
       humandFriendlyMapping.append(
           'Insert %s (@%d)' % (
-              targetNode.label(), targetNode.preorderPosition()))
+              targetNode.label(), targetNode.preorder_position()))
     elif j == ALPHA:
-      sourceNode = sourceTree.nodeAt(i)
+      sourceNode = sourceTree.node_at(i)
       humandFriendlyMapping.append(
           'Delete %s (@%d)' % (
-              sourceNode.label(), sourceNode.preorderPosition()))
+              sourceNode.label(), sourceNode.preorder_position()))
     else:
-      sourceNode = sourceTree.nodeAt(i)
-      targetNode = targetTree.nodeAt(j)
+      sourceNode = sourceTree.node_at(i)
+      targetNode = targetTree.node_at(j)
       if sourceNode.label() == targetNode.label():
         humandFriendlyMapping.append(
             'No change for %s (@%d and @%d)' % (
-                sourceNode.label(), sourceNode.preorderPosition(),
-                targetNode.preorderPosition()))
+                sourceNode.label(), sourceNode.preorder_position(),
+                targetNode.preorder_position()))
       else:
         humandFriendlyMapping.append(
             'Change from %s (@%d) to %s (@%d)' % (
-                sourceNode.label(), sourceNode.preorderPosition(),
-                targetNode.label(), targetNode.preorderPosition()))
+                sourceNode.label(), sourceNode.preorder_position(),
+                targetNode.label(), targetNode.preorder_position()))
   return humandFriendlyMapping
 
 # Returns the distance between the given trees and the list of pairs

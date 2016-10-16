@@ -3,17 +3,17 @@ from treediff import ALPHA
 DEBUG = False
 
 def generateDot(sourceTree, targetTree, diffMapping):
-    sourceTreeRootLabel = sourceTree.nodeAt(1).label()
-    targetTreeRootLabel = targetTree.nodeAt(1).label()
+    sourceTreeRootLabel = sourceTree.node_at(1).label()
+    targetTreeRootLabel = targetTree.node_at(1).label()
     sourceTreeLabelPrefix = 'Source'
     targetTreeLabelPrefix = 'Target'
     
     dotGenerator = _DotGenerator(
         sourceTreeLabelPrefix, sourceTreeRootLabel,
         targetTreeLabelPrefix, targetTreeRootLabel)
-    sourceTree.performPreorderTraversal(dotGenerator)
+    sourceTree.perform_preorder_traversal(dotGenerator)
     dotGenerator.switchToTargetTree()
-    targetTree.performPreorderTraversal(dotGenerator)
+    targetTree.perform_preorder_traversal(dotGenerator)
 
     # Fake a change operation
     #dotGenerator.addDottedLine('Source', "Z1", 'Target', "Z1")
@@ -43,9 +43,9 @@ def _decorateEditOperationsForDot(
         sourceNode = None
         targetNode = None
         if s != ALPHA:
-            sourceNode = sourceTree.nodeAt(s)
+            sourceNode = sourceTree.node_at(s)
         if t != ALPHA:
-            targetNode = targetTree.nodeAt(t)
+            targetNode = targetTree.node_at(t)
     
         if s == ALPHA:
             dotGenerator.addInsertion(
