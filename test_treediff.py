@@ -2,52 +2,52 @@
 # Run the test by executing "python test_treediff.py -v" at the command
 # line.
 import unittest
-from lib.tree import *
+from util.tree import *
 from treediff import *
 
 class TestTreeDiff(unittest.TestCase):
   def setUp(self):
     a = TreeNode('A')
     b = TreeNode('B')
-    a.addChild(b)
+    a.add_child(b)
     d = TreeNode('D')
-    b.addChild(d)
+    b.add_child(d)
     self.treeOne = Tree(a)
-    self.treeOne.buildCaches()
+    self.treeOne.build_caches()
 
     a = TreeNode('A')
     b = TreeNode('B')
     c = TreeNode('C')
     d = TreeNode('D')
-    a.addChild(b)
-    a.addChild(c)
-    c.addChild(d)
+    a.add_child(b)
+    a.add_child(c)
+    c.add_child(d)
     self.treeTwo = Tree(a)
-    self.treeTwo.buildCaches()
+    self.treeTwo.build_caches()
 
     a = TreeNode('A')
     b = TreeNode('B')
     c = TreeNode('C')
     d = TreeNode('D')
     e = TreeNode('E')
-    a.addChild(b)
-    a.addChild(c)
-    c.addChild(d)
-    d.addChild(e)
+    a.add_child(b)
+    a.add_child(c)
+    c.add_child(d)
+    d.add_child(e)
     self.treeThree = Tree(a)
-    self.treeThree.buildCaches()
+    self.treeThree.build_caches()
     
     a = TreeNode('A')
     b = TreeNode('B')
     c = TreeNode('CC')
     d = TreeNode('D')
     e = TreeNode('E')
-    a.addChild(b)
-    a.addChild(c)
-    c.addChild(d)
-    d.addChild(e)
+    a.add_child(b)
+    a.add_child(c)
+    c.add_child(d)
+    d.add_child(e)
     self.treeFour = Tree(a)
-    self.treeFour.buildCaches()
+    self.treeFour.build_caches()
 
   def test_distance(self):
     self.assertEqual(2, computeDiff(self.treeOne, self.treeTwo)[0])

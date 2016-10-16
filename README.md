@@ -10,28 +10,28 @@ During the implementation, we came across some minor issues in the reported algo
 
 At the moment, the trees are assumed to be instances of Tree class in the tree module contained in the implementation. An example run is below
 ```python
-from lib.tree import *
+from util.tree import *
 from treediff import *
 
 # Source Tree
 a = TreeNode('A')
 b = TreeNode('B')
-a.addChild(b)
+a.add_child(b)
 d = TreeNode('D')
-b.addChild(d)
+b.add_child(d)
 treeOne = Tree(a)
-treeOne.buildCaches()
+treeOne.build_caches()
 
 # Target Tree
 a = TreeNode('A')
 b = TreeNode('B')
 c = TreeNode('C')
 d = TreeNode('D')
-a.addChild(b)
-a.addChild(c)
-c.addChild(d)
+a.add_child(b)
+a.add_child(c)
+c.add_child(d)
 treeTwo = Tree(a)
-treeTwo.buildCaches()
+treeTwo.build_caches()
 
 distance, mapping = computeDiff(treeOne, treeTwo) 
 print distance # Prints 2
@@ -40,3 +40,5 @@ print produceHumanFriendlyMapping(mapping, treeOne, treeTwo) # ['No change for A
 ```
 
 The last line shows how to produce the mapping between the source and the target describing how a sequence of edit operations transforms the source tree to the target, ignoring the order in which edit operations are applied.
+
+Project site: https://cagdasgerede.github.io/T-diff/
