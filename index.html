@@ -32,35 +32,38 @@
 
 <p>At the moment, the trees are assumed to be instances of Tree class in the tree module contained in the implementation. An example run is below</p>
 
-<div class="highlight highlight-source-python"><pre><span class="pl-k">from</span> lib.tree <span class="pl-k">import</span> <span class="pl-k">*</span>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">from</span> util.tree <span class="pl-k">import</span> <span class="pl-k">*</span>
 <span class="pl-k">from</span> treediff <span class="pl-k">import</span> <span class="pl-k">*</span>
 
 <span class="pl-c"># Source Tree</span>
 a <span class="pl-k">=</span> TreeNode(<span class="pl-s"><span class="pl-pds">'</span>A<span class="pl-pds">'</span></span>)
 b <span class="pl-k">=</span> TreeNode(<span class="pl-s"><span class="pl-pds">'</span>B<span class="pl-pds">'</span></span>)
-a.addChild(b)
+a.add_child(b)
 d <span class="pl-k">=</span> TreeNode(<span class="pl-s"><span class="pl-pds">'</span>D<span class="pl-pds">'</span></span>)
-b.addChild(d)
+b.add_child(d)
 treeOne <span class="pl-k">=</span> Tree(a)
-treeOne.buildCaches()
+treeOne.build_caches()
 
 <span class="pl-c"># Target Tree</span>
 a <span class="pl-k">=</span> TreeNode(<span class="pl-s"><span class="pl-pds">'</span>A<span class="pl-pds">'</span></span>)
 b <span class="pl-k">=</span> TreeNode(<span class="pl-s"><span class="pl-pds">'</span>B<span class="pl-pds">'</span></span>)
 c <span class="pl-k">=</span> TreeNode(<span class="pl-s"><span class="pl-pds">'</span>C<span class="pl-pds">'</span></span>)
 d <span class="pl-k">=</span> TreeNode(<span class="pl-s"><span class="pl-pds">'</span>D<span class="pl-pds">'</span></span>)
-a.addChild(b)
-a.addChild(c)
-c.addChild(d)
+a.add_child(b)
+a.add_child(c)
+c.add_child(d)
 treeTwo <span class="pl-k">=</span> Tree(a)
-treeTwo.buildCaches()
+treeTwo.build_caches()
 
+<span class="pl-c"># Diff Computation</span>
 distance, mapping <span class="pl-k">=</span> computeDiff(treeOne, treeTwo) 
 <span class="pl-c1">print</span> distance <span class="pl-c"># Prints 2</span>
 <span class="pl-c1">print</span> mapping <span class="pl-c"># [(1, 1), (2, 3), (3, 4), ('alpha', 2)]</span>
 <span class="pl-c1">print</span> produceHumanFriendlyMapping(mapping, treeOne, treeTwo) <span class="pl-c"># ['No change for A (@1 and @1)', 'Change from B (@2) to C (@3)', 'No change for D (@3 and @4)', 'Insert B (@2)']</span></pre></div>
 
 <p>The last line shows how to produce the mapping between the source and the target describing how a sequence of edit operations transforms the source tree to the target, ignoring the order in which edit operations are applied.</p>
+
+<p>Project site: <a href="https://cagdasgerede.github.io/T-diff/">https://cagdasgerede.github.io/T-diff/</a></p>
 
       <footer class="site-footer">
         <span class="site-footer-owner"><a href="https://github.com/cagdasgerede/T-diff">T-diff</a> is maintained by <a href="https://github.com/cagdasgerede">cagdasgerede</a>.</span>
