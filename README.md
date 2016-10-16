@@ -33,6 +33,7 @@ c.add_child(d)
 treeTwo = Tree(a)
 treeTwo.build_caches()
 
+# Diff Computation
 distance, mapping = computeDiff(treeOne, treeTwo) 
 print distance # Prints 2
 print mapping # [(1, 1), (2, 3), (3, 4), ('alpha', 2)]
