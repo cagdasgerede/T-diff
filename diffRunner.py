@@ -22,7 +22,8 @@ def treesToDiff(sourceTree, targetTree, outputDotGraph=False):
 def _producePngFromDot(dotRepresentation, outputFileName="diffImage"):
     open('tmp.dot','w').write(dotRepresentation)
     import subprocess
+    fullFileName = "{}.png".format(outputFileName)
     subprocess.call([
-        "dot", "-Tpng", "tmp.dot", "-o",
-        "{}.png".format(outputFileName)])
+        "dot", "-Tpng", "tmp.dot", "-o", fullFileName])
+    subprocess.call("eog {} &".format(fullFileName), shell=True)
     
