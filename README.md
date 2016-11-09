@@ -43,3 +43,10 @@ print produceHumanFriendlyMapping(mapping, treeOne, treeTwo) # ['No change for A
 The last line shows how to produce the mapping between the source and the target describing how a sequence of edit operations transforms the source tree to the target, ignoring the order in which edit operations are applied.
 
 Project site: https://cagdasgerede.github.io/T-diff/
+
+
+Dependencies:
+- Graphviz (sudo apt-get install graphviz)
+- pip install requirements.txt
+
+
