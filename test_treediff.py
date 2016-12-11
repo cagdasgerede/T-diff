@@ -2,7 +2,6 @@
 # Run the test by executing "python test_treediff.py -v" at the command
 # line.
 import unittest
-from util.tree import *
 from treediff import *
 
 class TestTreeDiff(unittest.TestCase):
@@ -36,7 +35,7 @@ class TestTreeDiff(unittest.TestCase):
     d.add_child(e)
     self.treeThree = Tree(a)
     self.treeThree.build_caches()
-    
+
     a = TreeNode('A')
     b = TreeNode('B')
     c = TreeNode('CC')
