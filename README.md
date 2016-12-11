@@ -9,8 +9,8 @@ The time complexity of the algorithm is O(V * V' * L^2 * L'^2) where V, V' are t
 During the implementation, we came across some minor issues in the reported algorithm. The implementation contains the fixes for these issues.
 
 At the moment, the trees are assumed to be instances of Tree class in the tree module contained in the implementation. An example run is below
+
 ```python
-from util.tree import *
 from treediff import *
 
 # Source Tree
@@ -34,7 +34,7 @@ treeTwo = Tree(a)
 treeTwo.build_caches()
 
 # Diff Computation
-distance, mapping = computeDiff(treeOne, treeTwo) 
+distance, mapping = computeDiff(treeOne, treeTwo)
 print distance # Prints 2
 print mapping # [(1, 1), (2, 3), (3, 4), ('alpha', 2)]
 print produceHumanFriendlyMapping(mapping, treeOne, treeTwo) # ['No change for A (@1 and @1)', 'Change from B (@2) to C (@3)', 'No change for D (@3 and @4)', 'Insert B (@2)']
@@ -44,9 +44,28 @@ The last line shows how to produce the mapping between the source and the target
 
 Project site: https://cagdasgerede.github.io/T-diff/
 
+### Installation
 
-Dependencies:
-- Graphviz (sudo apt-get install graphviz)
-- pip install requirements.txt
+Install treediff using pip:
 
+```Shell
+sudo pip install treediff
+```
 
+If you want to draw graphs, install Graphviz with:
+
+```Shell
+sudo apt-get install graphviz
+```
+
+or grab it from [here](www.graphviz.org/Download.php).
+
+### Development
+
+Install this package in **editable** or **develop** mode:
+
+```Shell
+git clone https://github.com/cagdasgerede/T-diff.git
+cd T-diff/
+pip install -e .
+```

@@ -1,14 +1,14 @@
 # requires
 # pip install pyyaml
 import yaml
-from util.tree import Tree
-from util.tree import TreeNode
+from treediff import Tree
+from treediff import TreeNode
 
 def buildTreesFromYamlInput(treesAsYaml):
     yamlInput = yaml.safe_load_all(treesAsYaml)
     treesParsed = []
     for t in yamlInput:
-        treesParsed.append(t)    
+        treesParsed.append(t)
     trees = []
     for treeParsed in treesParsed:
       trees.append(_buildTree(treeParsed))
@@ -31,4 +31,3 @@ def _buildTree(treeParsed):
     aTree.build_caches()
     aTree.print_preorder_traversal()
     return aTree
-
