@@ -1,7 +1,7 @@
 package util;
 
 /*
- * A visitor class to apply the visitor pattern for navigating the tree
+ * A visitor interface to apply the visitor pattern for navigating the tree
  * */
 public interface Visitor {
 
