@@ -120,26 +120,24 @@ public class TestTree {
 	@Test
 	public void testAncestorIterator_success() {
 		List<Integer> ancestor_preorder_positions = new ArrayList<Integer>();
-		Generator<Integer> generator = tree_two.ancestor_iterator(4);
-		while (true) {
+		for (Integer i : tree_two.ancestor_iterator(4)) {
 			try {
-				ancestor_preorder_positions.add(generator.get());
+				ancestor_preorder_positions.add(i);
 			} catch (Exception e) {
 				break;
 			}
 		}
-		assertEquals(new ArrayList<Integer>(Arrays.asList(4, 3, 1, null)), ancestor_preorder_positions);
+		assertEquals(new ArrayList<Integer>(Arrays.asList(4, 3, 1)), ancestor_preorder_positions);
 
 		ancestor_preorder_positions = new ArrayList<Integer>();
-		generator = tree_two.ancestor_iterator(2);
-		while (true) {
+		for (Integer i : tree_two.ancestor_iterator(2)) {
 			try {
-				ancestor_preorder_positions.add(generator.get());
+				ancestor_preorder_positions.add(i);
 			} catch (Exception e) {
 				break;
 			}
 		}
-		assertEquals(new ArrayList<Integer>(Arrays.asList(2, 1, null)), ancestor_preorder_positions);
+		assertEquals(new ArrayList<Integer>(Arrays.asList(2, 1)), ancestor_preorder_positions);
 	}
 
 	/*
@@ -148,15 +146,14 @@ public class TestTree {
 	@Test
 	public void testAncestorIterator_from_the_root() {
 		List<Integer> ancestor_preorder_positions = new ArrayList<Integer>();
-		Generator<Integer> generator = tree_two.ancestor_iterator(1);
-		while (true) {
+		for (Integer i : tree_two.ancestor_iterator(1)) {
 			try {
-				ancestor_preorder_positions.add(generator.get());
+				ancestor_preorder_positions.add(i);
 			} catch (Exception e) {
 				break;
 			}
 		}
-		assertEquals(new ArrayList<Integer>(Arrays.asList(1, null)), ancestor_preorder_positions);
+		assertEquals(new ArrayList<Integer>(Arrays.asList(1)), ancestor_preorder_positions);
 	}
 
 	/*
@@ -164,14 +161,8 @@ public class TestTree {
 	 */
 	@Test(expected = IllegalArgumentException.class)
 	public void testAncestorIterator_from_non_existing_position() {
-		Generator<Integer> generator = tree_two.ancestor_iterator(100);
-		while (true) {
-			try {
-				generator.get();
-				System.out.println("Should not yield even once");
-			} catch (Exception e) {
-				break;
-			}
+		for (Integer i : tree_two.ancestor_iterator(100)) {
+			System.out.println("Should not yield even once");
 		}
 	}
 
