@@ -1,0 +1,3 @@
+"test" package includes unit tests for "util" and "diff" packages.
+"util" package passes all unit tests. 
+"diff" package has problems with 2 of 3 unit tests.
