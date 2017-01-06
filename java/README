@@ -3,3 +3,20 @@
 "diff" package has problems with 2 of 3 unit tests.
 
 Also, comments are taken from Python files. Probably there are mistakes.
+
+------------------------------------ EXTRA ---------------------------------------
+
+- The class named "Generator" is used for "python yield function" implementation in java.
+Source link for "Generator.java": https://gist.github.com/abhin4v/242100
+
+- Tuples are not available in Java. Pair class in javatuples library is used for that purpose.
+
+
+REFERENCED LIBRARIES:
+
+- com.google.guava_1.6.0.jar
+Download link: http://www.java2s.com/Code/Jar/c/Downloadcomgoogleguava160jar.htm
+
+- javatuples 1.2 distribution
+Download link: https://github.com/javatuples/javatuples/downloads
+ 
